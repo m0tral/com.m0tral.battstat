@@ -1,0 +1,15 @@
+<div class="container" >
+    <div class="head" on:click="onTitleClick">
+        <text class="title">
+            {{ title }}
+        </text>
+    </div>
+    <list id="imglist" class="listData" on:swipe="touchMove">
+        <list-item for="{{dataList}}" class="listItem">
+            <stack class="stackItem">
+                <div class="progress"></div>
+                <text class="itemName" on:click="onItemClick({{$item}})">{{$item.src}}</text>
+            </stack>
+        </list-item>
+    </list>
+</div>

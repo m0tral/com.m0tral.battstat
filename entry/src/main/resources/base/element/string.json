@@ -1,0 +1,12 @@
+{
+  "string": [
+    {
+      "name": "app_title",
+      "value": "MiWatch File Manager"
+    },
+    {
+      "name": "user_agent",
+      "value": "just template"
+    }
+  ]
+}
