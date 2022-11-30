@@ -29,7 +29,10 @@
       {
         "name": "default",
         "pages": [
-          "pages/index/index"
+          "pages/index/index",
+          "pages/hour/index",
+          "pages/day/index",
+          "pages/list/index"
         ]
       }
     ]

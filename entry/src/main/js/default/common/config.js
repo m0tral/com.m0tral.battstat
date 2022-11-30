@@ -1,6 +1,11 @@
 
 export default {
 
+    data: {
+        battByHour: [],
+        battByDay: [],
+    },
+
     SERVER_HTTP: "http://miwatch.corout.in",
     SERVER_HTTPS: "https://miwatch.corout.in",
 
@@ -9,4 +14,7 @@ export default {
 
     BIND_KEY: "bind_flag",
     EXT_MP3: ".mp3",
+
+    battByHour: [],
+    battByDay: [],
 }

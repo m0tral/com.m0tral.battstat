@@ -11,7 +11,7 @@
 .head {
     width: 466px;
     height: 60px;
-    background-color: midnightblue;
+    background-color: #202050;
     justify-content: center;
     align-items: flex-end;
 }
@@ -29,6 +29,25 @@
     background-color: darkblue;
 }
 
+.stackItem {
+    width: 466px;
+    height: 406px;
+    text-align: center;
+}
+
+.loading {
+    width: 466px;
+    height: 406px;
+    background-color: #222222;
+    flex-direction: column;
+}
+.loading-text {
+    width: 466px;
+    height: 60px;
+    padding-top: 20px;
+    text-align: center;
+}
+
 .listData {
     width: 466px;
     height: 406px;
@@ -40,19 +59,6 @@
     width: 466px;
     height: 80px;
     justify-content: center;
-}
-
-.stackItem {
-    width: 466px;
-    height: 80px;
-    text-align: center;
-}
-
-.progress {
-    top: 78px;
-    width: 466px;
-    height: 2px;
-    background-color: #444444;
 }
 
 .itemBack {

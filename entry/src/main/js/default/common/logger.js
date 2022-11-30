@@ -8,10 +8,10 @@ export default {
     },
 
     sayHelo() {
-        this.sendMessage("MiWatch Tweak started");
+        this.sendMessage("batt_stats started");
     },
 
     sayBye() {
-        this.sendMessage("MiWatch Tweak closed");
+        this.sendMessage("batt_stats closed");
     }
 }

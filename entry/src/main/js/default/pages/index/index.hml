@@ -4,12 +4,15 @@
             {{ title }}
         </text>
     </div>
-    <list id="imglist" class="listData" on:swipe="touchMove">
-        <list-item for="{{dataList}}" class="listItem">
-            <stack class="stackItem">
-                <div class="progress"></div>
-                <text class="itemName" on:click="onItemClick({{$item}})">{{$item.src}}</text>
-            </stack>
-        </list-item>
-    </list>
+    <stack class="stackItem">
+        <div class="loading" show="{{loading}}" on:swipe="touchMove">
+            <text class="loading-text">{{loadingText}}</text>
+        </div>
+        <div class="loading" show="{{!loading}}" on:swipe="touchMove">
+            <text class="loading-text">size: {{fileSize}}</text>
+            <text class="loading-text">records: {{recordCount}}</text>
+            <text class="loading-text">first: {{firstTime}}</text>
+            <text class="loading-text">last: {{lastTime}}</text>
+        </div>
+    </stack>
 </div>
