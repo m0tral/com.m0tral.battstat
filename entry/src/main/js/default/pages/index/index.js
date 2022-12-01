@@ -8,11 +8,15 @@ export default {
     data: {
         title: 'info',
         filename: '/nand/batt_stat',
+        fileDaily: '/nand/batt_{0}_{1}',
+        fileMonth: '/nand/batt_{0}',
+        fileCharge: '/nand/batt_charge',
         battByHour:[],
         battByDay:[],
-        battCharge: 0,
-        battLast: 0,
+        battCharge: undefined,
+        battLast: undefined,
         loading: true,
+        showMenu: false,
         loadingText: "Loading..",
         recordCount: 0,
         fileSize: 0,
@@ -22,6 +26,18 @@ export default {
     },
 
     onInit() {
+    },
+
+    getCurrentTime() {
+        var now = new Date();
+
+        return {
+            year: now.getFullYear(),
+            month: now.getMonth()+1,
+            day: now.getDate(),
+            hour: now.getHours(),
+            min: now.getMinutes()
+        };
     },
 
     onShow() {
@@ -37,79 +53,136 @@ export default {
         this.battByHour = [];
         this.battByDay = [];
 
+        this.loadLastCharge();
+        this.loadBattByDay();
+        this.loadBattByMonth();
+    },
+
+    loadLastCharge() {
+
+        file.readArrayBuffer({
+            uri: this.fileCharge,
+            position: 0,
+            length: 6,
+            success: (data) => {
+                this.battCharge = {
+                    month: data.buffer[0],
+                    day: data.buffer[1],
+                    hour: data.buffer[2],
+                    min: data.buffer[3],
+                    level: data.buffer[4],
+                    charge: data.buffer[5]
+                };
+            },
+            fail: () => {
+                this.battCharge = undefined;
+            }
+        });
+
+    },
+
+    loadBattByDay() {
+
+        let now = this.getCurrentTime();
+        let filename = this.fileDaily
+            .replace("{0}", config.zeroPad(now.month, 10))
+            .replace("{1}", config.zeroPad(now.day, 10));
+
         file.get({
-            uri: this.filename,
+            uri: filename,
             success: (info) => {
 
                 this.fileSize = info.length;
-                this.recordCount = info.length / 5;
+                this.recordCount = info.length / 6;
 
                 let len = info.length;
                 let pos = 0;
                 let blockLen = 1000;
 
-                this.readBattData(pos, blockLen, len);
+                this.readBattData(filename, pos, blockLen, len, 1);
             },
             fail: (e) => {
-                this.displayFail(e);
+                this.displayFail("daily: "+ e);
             }
         });
     },
 
-    readBattData(pos, blockLen, totalLen) {
+    loadBattByMonth() {
+
+        let now = this.getCurrentTime();
+        let filename = this.fileMonth.replace("{0}", config.zeroPad(now.month, 10));
+
+        file.get({
+            uri: filename,
+            success: (info) => {
+
+                let len = info.length;
+                let pos = 0;
+                let blockLen = 1000;
+
+                this.readBattData(filename, pos, blockLen, len, 2);
+            },
+            fail: (e) => {
+                this.displayFail("month: "+ e);
+            }
+        });
+    },
+
+    readBattData(filename, pos, blockLen, totalLen, mode) {
 
         let left = totalLen - pos;
         let len = left > blockLen ? blockLen : left;
 
         file.readArrayBuffer({
-            uri: this.filename,
+            uri: filename,
             position: pos,
             length: len,
             success: (data) => {
 
-                let hour, min, sec, level, charge;
                 let displayFirst;
+                let record;
 
-                for (let i = 0; i < len; i += 5) {
-                    hour = data.buffer[i];
-                    min = data.buffer[i + 1];
-                    sec = data.buffer[i + 2];
-                    level = data.buffer[i + 3];
-                    charge = data.buffer[i + 4];
+                for (let i = 0; i < len; i += 6) {
 
-                    this.parseBattData(hour, min, sec, level, charge);
+                    record = {
+                        month: data.buffer[i],
+                        day: data.buffer[i + 1],
+                        hour: data.buffer[i + 2],
+                        min: data.buffer[i + 3],
+                        level: data.buffer[i + 4],
+                        charge: data.buffer[i + 5]
+                    }
 
-//                    this.rawData.push({
-//                        hour: hour,
-//                        min: min,
-//                        sec: sec,
-//                        level: level,
-//                        charge: charge
-//                    });
+                    if (mode == 1) // daily
+                        this.parseBattDaily(record);
+                    if (mode == 2) // month
+                        this.parseBattMonth(record);
 
-                    if (i == 0 && pos == 0) {
-                        displayFirst = "[" + this.zeroPad(hour, 10)
-                        + ":" + this.zeroPad(min, 10)
-                        + ":" + this.zeroPad(sec, 10)
-                        + "] " + level;
+                    if (mode == 1) {
+                        if (i == 0 && pos == 0) {
+                            displayFirst = "[" + config.zeroPad(record.hour, 10)
+                            + ":" + config.zeroPad(record.min, 10)
+                            + "] " + record.level;
 
-                        this.firstTime = displayFirst;
+                            this.firstTime = displayFirst;
+                        }
                     }
                 }
 
-                let display = "[" + this.zeroPad(hour, 10)
-                + ":" + this.zeroPad(min, 10)
-                + ":" + this.zeroPad(sec, 10)
-                + "] " + level;
+                if (mode == 1) {
+                    let display = "[" + config.zeroPad(record.hour, 10)
+                    + ":" + config.zeroPad(record.min, 10)
+                    + "] " + record.level;
 
-                this.lastTime = display;
+                    this.lastTime = display;
+                }
 
                 pos += len;
                 if (pos == totalLen) {
                     this.loading = false;
                 }
                 else {
-                    this.readBattData(pos, blockLen, totalLen);
+                    this.readBattData(filename, pos, blockLen, totalLen, mode);
                 }
             },
             fail: (data, code) => {
@@ -117,11 +190,6 @@ export default {
                 this.displayFail(error);
             }
         });
-    },
-
-    zeroPad(nr, base) {
-        var  len = (String(base).length - String(nr).length)+1;
-        return len > 0? new Array(len).join('0')+nr : nr;
     },
 
     displayFail(e) {
@@ -133,62 +201,39 @@ export default {
         this.loadStats();
     },
 
-    onItemClick(e) {
+    onItemClick() {
     },
 
-    parseBattData(hour, min, sec, level, charge) {
+    parseBattDaily(e) {
 
-        let e = {
-            hour: hour,
-            min: min,
-            sec: sec,
-            level: level,
-            charge: charge
-        };
-
-        if (this.battByDay.length == 0) {
-            this.battByDay.push(e);
-        }
-        else if (hour == 0 && min == 0) {
-            this.battByDay.push(e);
-        }
-
-        if (charge == 1) {
-            this.battCharge = e;
+        if (this.battByHour.length == 0) {
+            this.battByHour.push(e);
         }
 
         this.battLast = e;
 
-        //let startIndex = this.getLastDayIndex();
-
-        //for (let i=startIndex; i<this.rawData.length; i++) {
-        //    let e = this.rawData[i];
-
-        if (this.hourPrev != hour && min == 0) {
+        if (this.hourPrev != e.hour && e.min == 0) {
             if (this.battByHour.length > 20) this.battByHour.shift();
             this.battByHour.push(e);
-            this.hourPrev = hour;
+            this.hourPrev = e.hour;
         }
     },
 
-    getLastDayIndex() {
-        let index = 0;
+    parseBattMonth(e) {
 
-        for (let i=0; i<this.rawData.length; i++) {
-            let e = this.rawData[i];
-            if (e.hour == 0 && e.min == 0)
-                index = i;
+        if (this.battByDay.length == 0) {
+            if (this.battByDay.length > 20) this.battByDay.shift();
+            this.battByDay.push(e);
         }
-
-        return index;
+        else if (e.hour == 0 && e.min == 0) {
+            if (this.battByDay.length > 20) this.battByDay.shift();
+            this.battByDay.push(e);
+        }
     },
 
     touchMove(e) {
         if (e.direction == "right") {
             app.terminate();
-        }
-        else if (e.direction == "left") {
-            file.delete({ uri: this.filename});
         }
         else if (e.direction == "up") {
             router.replace({
@@ -202,4 +247,35 @@ export default {
             });
         }
     },
+
+    onMenuClear() {
+
+        this.showMenu = false;
+
+        file.delete({uri: this.filename });
+        file.delete({uri: this.fileCharge });
+
+        let now = this.getCurrentTime();
+
+        for (var i = 1; i <= now.day ; i++) {
+            let filename = this.fileDaily
+            .replace("{0}", config.zeroPad(now.month, 10))
+                .replace("{1}", config.zeroPad(i, 10));
+
+            file.delete({uri: filename });
+        }
+
+        this.loadStats();
+
+        //filename = this.fileMonth.replace("{0}", config.zeroPad(now.month, 10));
+        //file.delete({uri: filename });
+    },
+
+    onMenuCancel() {
+        this.showMenu = false;
+    },
+
+    onLongPress() {
+        this.showMenu = true;
+    }
 }

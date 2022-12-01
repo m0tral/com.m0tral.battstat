@@ -8,11 +8,15 @@
         <div class="loading" show="{{loading}}" on:swipe="touchMove">
             <text class="loading-text">{{loadingText}}</text>
         </div>
-        <div class="loading" show="{{!loading}}" on:swipe="touchMove">
+        <div class="loading" show="{{!loading}}" on:swipe="touchMove" on:longpress="onLongPress">
             <text class="loading-text">size: {{fileSize}}</text>
             <text class="loading-text">records: {{recordCount}}</text>
             <text class="loading-text">first: {{firstTime}}</text>
             <text class="loading-text">last: {{lastTime}}</text>
+        </div>
+        <div class="popupMenu" show="{{showMenu}}" >
+            <input class="menuButton" type="button" value="clear data" on:click="onMenuClear" ></input>
+            <input class="menuButton" type="button" value="cancel" on:click="onMenuCancel" ></input>
         </div>
     </stack>
 </div>

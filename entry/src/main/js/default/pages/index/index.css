@@ -76,3 +76,17 @@
     white-space: nowrap;
     text-overflow: ellipsis;
 }
+
+.popupMenu {
+    width: 466px;
+    height: 406px;
+    background-color: rgba(0,0,0,0.8);
+    flex-direction: column;
+    align-items: center;
+}
+.menuButton {
+    margin-top: 50px;
+    width: 266px;
+    height: 100px;
+    background-color: midnightblue;
+}
