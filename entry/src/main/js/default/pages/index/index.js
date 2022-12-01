@@ -22,7 +22,9 @@ export default {
     },
 
     onInit() {
+    },
 
+    onShow() {
         this.loadStats();
     },
 
@@ -163,6 +165,7 @@ export default {
         //    let e = this.rawData[i];
 
         if (this.hourPrev != hour && min == 0) {
+            if (this.battByHour.length > 20) this.battByHour.shift();
             this.battByHour.push(e);
             this.hourPrev = hour;
         }

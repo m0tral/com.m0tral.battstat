@@ -1,0 +1,111 @@
+.container {
+    justify-content: center;
+    align-items: center;
+    left: 0px;
+    top: 0px;
+    width: 466px;
+    height: 466px;
+    flex-direction: column;
+}
+
+.head {
+    width: 466px;
+    height: 60px;
+    background-color: #202050;
+    justify-content: center;
+    align-items: flex-end;
+}
+
+.title {
+    font-size: 30px;
+    text-align: center;
+    width: 466px;
+    height: 45px;
+}
+
+.info {
+    width: 400px;
+    height: 20px;
+    background-color: darkblue;
+}
+
+.stackItem {
+    width: 466px;
+    height: 406px;
+    text-align: center;
+}
+
+.loading {
+    width: 466px;
+    height: 406px;
+    background-color: #222222;
+}
+.loading-text {
+    width: 466px;
+    height: 40px;
+    margin-top: 150px;
+    text-align: center;
+}
+
+.chart {
+    width: 466px;
+    height: 406px;
+    background-color: #101010;
+    align-items: center;
+    justify-content: center;
+}
+.stackChart {
+    width: 466px;
+    height: 406px;
+}
+
+.levelStart, .levelEnd {
+    top:270px;
+    width: 60px;
+    height: 50px;
+    font-size: 22px;
+}
+.levelStart {
+    left: 50px;
+}
+
+.levelEnd {
+    left: 360px;
+}
+
+.levelMax, .levelMin {
+    top: 300px;
+    font-size: 22px;
+}
+.levelMax {
+    left:120px;
+}
+.levelMin {
+    left:260px;
+}
+.chargeTime, .chargeFrom {
+    left: 70px;
+    font-size: 26px;
+}
+.chargeTime {
+    top:25px;
+}
+.chargeFrom {
+    top:65px;
+}
+
+.chartDay {
+    width: 360px;
+    height: 150px;
+    margin-bottom: 20px;
+/*    background-color: #101020;*/
+}
+
+.itemName {
+    left: 20px;
+    top: 18px;
+    width: 426px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}

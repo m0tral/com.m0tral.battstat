@@ -1,0 +1,15 @@
+<div class="container" >
+    <div class="head" on:click="onTitleClick">
+        <text class="title">
+            {{ title }}
+        </text>
+    </div>
+    <stack class="stackItem">
+        <div class="loading" show="{{loading}}" on:swipe="touchMove"><text class="loading-text">{{loadingText}}</text></div>
+        <list id="imglist" show="{{!loading}}" class="listData" on:swipe="touchMove">
+            <list-item for="{{dataList}}" class="listItem">
+                <text class="itemName" on:click="onItemClick({{$item}})">{{$item.display}}</text>
+            </list-item>
+        </list>
+    </stack>
+</div>

@@ -1,0 +1,24 @@
+<div class="container" on:swipe="touchMove">
+    <div class="head" on:click="onTitleClick">
+        <text class="title">
+            {{ title }}
+        </text>
+    </div>
+    <stack class="stackItem">
+        <div class="loading" show="{{loading}}">
+            <text class="loading-text">{{loadingText}}</text>
+        </div>
+        <div class="chart" ref="battChart" show="{{!loading}}">
+            <chart class="chartDay" type="bar"
+                   options="{{options}}" datasets="{{barData}}">
+            </chart>
+        </div>
+        <text class="chargeTime" show="{{!loading}}">{{chargeTimePrefix}}{{chargeTime}}</text>
+        <text class="chargeFrom" show="{{!loading}}">{{chargeFromPrefix}}{{chargeFrom}}</text>
+        <text class="levelMin" show="{{!loading}}">min: {{levelMin}}%</text>
+        <text class="levelStart" show="{{!loading}}">{{levelStart}}%</text>
+        <text class="levelEnd" show="{{!loading}}">{{levelEnd}}%</text>
+        <text class="levelMax" show="{{!loading}}">max: {{levelMax}}%</text>
+        <text class="levelMin" show="{{!loading}}">min: {{levelMin}}%</text>
+    </stack>
+</div>
