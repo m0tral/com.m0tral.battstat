@@ -10,6 +10,8 @@ export default {
         filename: '/nand/batt_stat',
         battByHour:[],
         battByDay:[],
+        battCharge: 0,
+        battLast: 0,
         loading: true,
         loadingText: "Loading..",
         recordCount: 0,
@@ -71,7 +73,7 @@ export default {
                     min = data.buffer[i + 1];
                     sec = data.buffer[i + 2];
                     level = data.buffer[i + 3];
-                    charge = data.buffer[i + 3];
+                    charge = data.buffer[i + 4];
 
                     this.parseBattData(hour, min, sec, level, charge);
 
@@ -149,6 +151,12 @@ export default {
             this.battByDay.push(e);
         }
 
+        if (charge == 1) {
+            this.battCharge = e;
+        }
+
+        this.battLast = e;
+
         //let startIndex = this.getLastDayIndex();
 
         //for (let i=startIndex; i<this.rawData.length; i++) {
@@ -185,6 +193,8 @@ export default {
                 params: {
                     dataByHour: this.battByHour,
                     dataByDay: this.battByDay,
+                    lastCharge: this.battCharge,
+                    lastValue: this.battLast
                 }
             });
         }
