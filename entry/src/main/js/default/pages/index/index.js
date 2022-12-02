@@ -23,6 +23,10 @@ export default {
         firstTime: 0,
         lastTime: 0,
         hourPrev: 0,
+        pageIndex: 0,
+        titlePercent: "",
+        titleLastCharge: "",
+        titleUptime: "",
     },
 
     onInit() {
@@ -46,12 +50,23 @@ export default {
 
     loadStats() {
 
-        this.loading = true;
+        //this.loading = true;
 
         this.hourPrev = -1;
 
         this.battByHour = [];
         this.battByDay = [];
+
+//        this.battCharge = {
+//            month: 12,
+//            day: 1,
+//            hour: 5,
+//            min: 20,
+//            level: 100,
+//            charge: 0
+//        };
+//        this.setLastCharged();
+//        this.titlePercent = this.battCharge.level +" => 82";
 
         this.loadLastCharge();
         this.loadBattByDay();
@@ -73,12 +88,64 @@ export default {
                     level: data.buffer[4],
                     charge: data.buffer[5]
                 };
+
+                this.setLastCharged();
             },
             fail: () => {
                 this.battCharge = undefined;
+                this.titlePercent = "please charge";
+                this.titleLastCharge = "to start collect";
+                this.titleUptime = "statistics"
             }
         });
 
+    },
+
+    setLastCharged() {
+        this.titleLastCharge = "charged: "
+            + config.zeroPad(this.battCharge.day, 10)
+            +"."+ config.zeroPad(this.battCharge.month, 10)
+            +" " + config.zeroPad(this.battCharge.hour, 10)
+            +":"+ config.zeroPad(this.battCharge.min, 10);
+
+        this.setUptime();
+    },
+
+    setUptime() {
+
+        if (this.battCharge == undefined) {
+            this.titleUptime = "uptime: --";
+            return;
+        }
+
+        let now = new Date();
+
+        let end = new Date(now.getFullYear(), now.getMonth(), now.getDate(), now.getHours(), now.getMinutes());
+        let charge = new Date(now.getFullYear(), this.battCharge.month-1, this.battCharge.day,
+            this.battCharge.hour, this.battCharge.min);
+
+        let diffMs =  end - charge;
+
+        var diffDays = Math.floor(diffMs / 86400000); // days
+        var diffHrs = Math.floor((diffMs % 86400000) / 3600000); // hours
+        var diffMins = Math.round(((diffMs % 86400000) % 3600000) / 60000); // minutes
+
+        if (diffDays == 0)
+        {
+            if (diffHrs == 0) {
+                this.titleUptime = "uptime: "+ diffMins +" min";
+            }
+            else {
+                this.titleUptime = "uptime: "+ config.zeroPad(diffHrs, 10)
+                    +":"+ config.zeroPad(diffMins, 10) +" min";
+            }
+        }
+        else {
+            this.titleUptime = "uptime: "+
+                diffDays + " days "+
+                config.zeroPad(diffHrs, 10) +":"+
+                config.zeroPad(diffMins, 10) +" min";
+        }
     },
 
     loadBattByDay() {
@@ -169,17 +236,18 @@ export default {
                     }
                 }
 
-                if (mode == 1) {
-                    let display = "[" + config.zeroPad(record.hour, 10)
-                    + ":" + config.zeroPad(record.min, 10)
-                    + "] " + record.level;
-
-                    this.lastTime = display;
-                }
-
                 pos += len;
                 if (pos == totalLen) {
                     this.loading = false;
+
+                    if (mode == 1) {
+                        let display = "[" + config.zeroPad(record.hour, 10)
+                        + ":" + config.zeroPad(record.min, 10)
+                        + "] " + record.level;
+
+                        this.lastTime = display;
+                        this.titlePercent = this.battCharge.level +" => "+ record.level;
+                    }
                 }
                 else {
                     this.readBattData(filename, pos, blockLen, totalLen, mode);
@@ -233,7 +301,8 @@ export default {
 
     touchMove(e) {
         if (e.direction == "right") {
-            app.terminate();
+            if (this.pageIndex == 0)
+                app.terminate();
         }
         else if (e.direction == "up") {
             router.replace({

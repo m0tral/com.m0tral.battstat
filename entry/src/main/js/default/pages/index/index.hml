@@ -8,12 +8,19 @@
         <div class="loading" show="{{loading}}" on:swipe="touchMove">
             <text class="loading-text">{{loadingText}}</text>
         </div>
-        <div class="loading" show="{{!loading}}" on:swipe="touchMove" on:longpress="onLongPress">
-            <text class="loading-text">size: {{fileSize}}</text>
-            <text class="loading-text">records: {{recordCount}}</text>
-            <text class="loading-text">first: {{firstTime}}</text>
-            <text class="loading-text">last: {{lastTime}}</text>
-        </div>
+        <swiper class="swiper" ref="swiper" show="{{!loading}}" loop="false" index="{{pageIndex}}" on:swipe="touchMove" on:longpress="onLongPress">
+            <div class="info">
+                <text class="loading-text">{{titlePercent}}</text>
+                <text class="loading-text">{{titleLastCharge}}</text>
+                <text class="loading-text">{{titleUptime}}</text>
+            </div>
+            <div class="loading">
+                <text class="loading-text">size: {{fileSize}}</text>
+                <text class="loading-text">records: {{recordCount}}</text>
+                <text class="loading-text">first: {{firstTime}}</text>
+                <text class="loading-text">last: {{lastTime}}</text>
+            </div>
+        </swiper>
         <div class="popupMenu" show="{{showMenu}}" >
             <input class="menuButton" type="button" value="clear data" on:click="onMenuClear" ></input>
             <input class="menuButton" type="button" value="cancel" on:click="onMenuCancel" ></input>

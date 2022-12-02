@@ -35,9 +35,16 @@
     text-align: center;
 }
 
-.loading {
+.loading, .swiper {
     width: 466px;
     height: 406px;
+    background-color: #222222;
+    flex-direction: column;
+}
+.info {
+    width: 466px;
+    height: 406px;
+    padding-top: 60px;
     background-color: #222222;
     flex-direction: column;
 }

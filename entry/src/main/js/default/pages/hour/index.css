@@ -50,7 +50,7 @@
 .chart {
     width: 466px;
     height: 406px;
-    background-color: #101010;
+    background-color: rgba(0,0,0,0);
     align-items: center;
     justify-content: center;
 }
@@ -83,15 +83,10 @@
 .levelMin {
     left:260px;
 }
-.chargeTime, .chargeFrom {
+.drain {
+    top: 40px;
     left: 70px;
     font-size: 26px;
-}
-.chargeTime {
-    top:25px;
-}
-.chargeFrom {
-    top:65px;
 }
 
 .chartDay {

@@ -13,10 +13,7 @@ export default {
         levelEnd: 0,
         levelMax: 0,
         levelMin: 0,
-        chargeTimePrefix: "charged: ",
-        chargeFromPrefix: "on battery ",
-        chargeTime: "",
-        chargeFrom: "",
+        titleDrain: "",
         battByHour:[],
         battByDay:[],
         battCharge: null,
@@ -37,13 +34,13 @@ export default {
                 color: "#8781b4",
             },
         },
-        barData: [{
+        barLevel: [{
                 data: [],
                 gradient: true,
                 strokeColor: "#00000000",
                 fillColor: "#1781b4",
-            },
-            {
+            }],
+        barDiff: [{
                 data: [],
                 gradient: true,
                 strokeColor: "#00000000",
@@ -60,25 +57,34 @@ export default {
         this.battLast = this.lastValue;
 
         let batt = this.battByHour;
+        let maxDrain = 0;
+        let avgDrain = 0;
 
         let dataLevel = batt.map(e => e.level);
         let dataUse = [];
         dataUse[0] = 0;
         for (var i = 1; i < dataLevel.length; i++) {
             let delta = dataLevel[i-1] - dataLevel[i];
+            if (delta > maxDrain) maxDrain = delta;
+
             delta = delta * 4;
             dataUse[i] = delta;
         }
+        dataUse.unshift();
+        dataUse.push(0);
 
-        this.barData[0].data = dataLevel;
-        this.barData[1].data = dataUse;
+        if (dataUse.length > 0) {
+            avgDrain = dataUse.reduce((a, b) => {
+                if (b > 0) { return a + b; } else { return a + 0; }
+            }, 0) / dataUse.length;
+        }
+
+        this.barLevel[0].data = dataLevel;
+        this.barDiff[0].data = dataUse;
 
         this.levelStart = batt[0].level;
 
         this.levelEnd = this.battLast.level;
-
-        this.chargeTime = "--";
-        this.chargeFrom = "--";
 
         if (batt.length > 0) this.levelMin = 100;
         for (let i = 0; i < batt.length ; i++) {
@@ -88,32 +94,7 @@ export default {
             if (level < this.levelMin) this.levelMin = level;
         }
 
-        if (this.battCharge != null) {
-
-            this.chargeTime = "" + config.zeroPad(this.battCharge.hour, 10)
-                + ":" + config.zeroPad(this.battCharge.min, 10)
-                + " to "+ this.battCharge.level +"%";
-
-            if (this.battLast.charge == 0) {
-
-                if (this.chargeTime != "--") {
-
-                    let minCurr = (this.battLast.hour * 60) + this.battLast.min;
-                    let minChrg = (this.battCharge.hour * 60) + this.battCharge.min;
-
-                    let diff = minCurr - minChrg;
-                    let diffMin = diff % 60;
-                    let diffHour = (diff - diffMin) / 60;
-
-                    this.chargeFrom = "" + config.zeroPad(diffHour, 10)
-                        + ":" + config.zeroPad(diffMin, 10)
-                        + " min";
-                }
-            }
-            else {
-                this.chargeFrom = "charging..";
-            }
-        }
+        this.titleDrain = "drain max: "+ maxDrain +"% avg: "+ avgDrain +"%";
 
         this.loading = false;
     },

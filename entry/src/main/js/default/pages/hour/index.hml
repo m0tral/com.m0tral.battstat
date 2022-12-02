@@ -8,13 +8,17 @@
         <div class="loading" show="{{loading}}">
             <text class="loading-text">{{loadingText}}</text>
         </div>
-        <div class="chart" ref="battChart" show="{{!loading}}">
+        <div class="chart" show="{{!loading}}">
             <chart class="chartDay" type="bar"
-                   options="{{options}}" datasets="{{barData}}">
+                   options="{{options}}" datasets="{{barLevel}}">
             </chart>
         </div>
-        <text class="chargeTime" show="{{!loading}}">{{chargeTimePrefix}}{{chargeTime}}</text>
-        <text class="chargeFrom" show="{{!loading}}">{{chargeFromPrefix}}{{chargeFrom}}</text>
+        <div class="chart" show="{{!loading}}">
+            <chart class="chartDay" type="bar"
+                   options="{{options}}" datasets="{{barDiff}}">
+            </chart>
+        </div>
+        <text class="drain" show="{{!loading}}">{{titleDrain}}</text>
         <text class="levelMin" show="{{!loading}}">min: {{levelMin}}%</text>
         <text class="levelStart" show="{{!loading}}">{{levelStart}}%</text>
         <text class="levelEnd" show="{{!loading}}">{{levelEnd}}%</text>
