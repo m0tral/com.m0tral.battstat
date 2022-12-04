@@ -23,10 +23,55 @@
     height: 45px;
 }
 
-.info {
-    width: 400px;
-    height: 20px;
-    background-color: darkblue;
+.dataRow {
+    width: 466px;
+    height: 60px;
+    background-color: transparent;
+}
+
+.percentRow {
+    justify-content: center;
+    width: 466px;
+    height: 60px;
+    margin-bottom: 30px;
+    background-color: transparent;
+}
+
+.imgFlow {
+    width: 60px;
+    height: 26px;
+    margin-top: 27px;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+.imgCharge {
+    width: 60px;
+    height: 47px;
+    margin-top: 16px;
+    margin-left: 40px;
+}
+
+.imgUptime {
+    width: 40px;
+    height: 40px;
+    margin-top: 20px;
+    margin-left: 50px;
+    margin-right: 10px;
+}
+
+.percentFrom, .percentTill {
+    height: 60px;
+    padding-top: 18px;
+}
+.percentTill {
+    padding-right: 30px;
+}
+
+.info-text {
+    height: 60px;
+    padding-top: 18px;
+    padding-left: 20px;
 }
 
 .stackItem {
@@ -38,13 +83,13 @@
 .loading, .swiper {
     width: 466px;
     height: 406px;
-    background-color: #222222;
+    background-color: rgba(0,0,0,0);
     flex-direction: column;
 }
 .info {
     width: 466px;
     height: 406px;
-    padding-top: 60px;
+    padding-top: 30px;
     background-color: #222222;
     flex-direction: column;
 }

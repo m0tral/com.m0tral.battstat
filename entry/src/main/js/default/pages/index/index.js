@@ -27,6 +27,8 @@ export default {
         titlePercent: "",
         titleLastCharge: "",
         titleUptime: "",
+        percentFrom: 100,
+        percentTo: 0,
     },
 
     onInit() {
@@ -58,8 +60,8 @@ export default {
         this.battByDay = [];
 
 //        this.battCharge = {
-//            month: 12,
-//            day: 1,
+//            month: 11,
+//            day: 10,
 //            hour: 5,
 //            min: 20,
 //            level: 100,
@@ -102,9 +104,12 @@ export default {
     },
 
     setLastCharged() {
-        this.titleLastCharge = "charged: "
+
+        this.percentFrom = this.battCharge.level;
+
+        this.titleLastCharge = ""
             + config.zeroPad(this.battCharge.day, 10)
-            +"."+ config.zeroPad(this.battCharge.month, 10)
+            +"/"+ config.zeroPad(this.battCharge.month, 10)
             +" " + config.zeroPad(this.battCharge.hour, 10)
             +":"+ config.zeroPad(this.battCharge.min, 10);
 
@@ -114,7 +119,7 @@ export default {
     setUptime() {
 
         if (this.battCharge == undefined) {
-            this.titleUptime = "uptime: --";
+            this.titleUptime = "--";
             return;
         }
 
@@ -133,15 +138,15 @@ export default {
         if (diffDays == 0)
         {
             if (diffHrs == 0) {
-                this.titleUptime = "uptime: "+ diffMins +" min";
+                this.titleUptime = ""+ diffMins +" min";
             }
             else {
-                this.titleUptime = "uptime: "+ config.zeroPad(diffHrs, 10)
+                this.titleUptime = ""+ config.zeroPad(diffHrs, 10)
                     +":"+ config.zeroPad(diffMins, 10) +" min";
             }
         }
         else {
-            this.titleUptime = "uptime: "+
+            this.titleUptime = ""+
                 diffDays + " days "+
                 config.zeroPad(diffHrs, 10) +":"+
                 config.zeroPad(diffMins, 10) +" min";
@@ -246,7 +251,8 @@ export default {
                         + "] " + record.level;
 
                         this.lastTime = display;
-                        this.titlePercent = this.battCharge.level +" => "+ record.level;
+                        //this.titlePercent = this.battCharge.level +" => "+ record.level;
+                        this.percentTo = record.level;
                     }
                 }
                 else {

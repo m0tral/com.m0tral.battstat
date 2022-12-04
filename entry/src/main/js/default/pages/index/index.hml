@@ -10,9 +10,19 @@
         </div>
         <swiper class="swiper" ref="swiper" show="{{!loading}}" loop="false" index="{{pageIndex}}" on:swipe="touchMove" on:longpress="onLongPress">
             <div class="info">
-                <text class="loading-text">{{titlePercent}}</text>
-                <text class="loading-text">{{titleLastCharge}}</text>
-                <text class="loading-text">{{titleUptime}}</text>
+                <div class="percentRow">
+                    <text class="percentFrom">{{percentFrom}}</text>
+                    <image class="imgFlow" src="/common/flow.png"></image>
+                    <text class="percentTill">{{percentTo}}</text>
+                </div>
+                <div class="dataRow">
+                    <image class="imgCharge" src="/common/charge.png"></image>
+                    <text class="info-text">{{titleLastCharge}}</text>
+                </div>
+                <div class="dataRow">
+                    <image class="imgUptime" src="/common/uptime.png"></image>
+                    <text class="info-text">{{titleUptime}}</text>
+                </div>
             </div>
             <div class="loading">
                 <text class="loading-text">size: {{fileSize}}</text>

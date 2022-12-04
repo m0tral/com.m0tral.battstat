@@ -94,7 +94,7 @@ export default {
             if (level < this.levelMin) this.levelMin = level;
         }
 
-        this.titleDrain = "drain max: "+ maxDrain +"% avg: "+ avgDrain +"%";
+        this.titleDrain = "drain max: "+ maxDrain +"% avg: "+ avgDrain.toFixed(1) +"%";
 
         this.loading = false;
     },
