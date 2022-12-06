@@ -8,9 +8,9 @@ export default {
     data: {
         title: 'Hour view',
         loading: false,
-        loadingText: "Loading..",
-        levelStart: 0,
-        levelEnd: 0,
+        nodata: "No data",
+        scaleXStart: "",
+        scaleXEnd: "",
         levelMax: 0,
         levelMin: 0,
         titleDrain: "",
@@ -20,31 +20,30 @@ export default {
         battLast: null,
         options: {
             xAxis: {
-                min: 0,
-                max: 124,
-                axisTick: 20,
-                display: true,
-                color: "#8781b4",
+                min: 0, max: 124, axisTick: 20, display: true, color: "#8781b4",
             },
             yAxis: {
-                min: 0,
-                max: 100,
-                axisTick: 10,
-                display: false,
-                color: "#8781b4",
+                min: 0, max: 100, axisTick: 10, display: false, color: "#8781b4",
             },
         },
-        barLevel: [{
-                data: [],
-                gradient: true,
-                strokeColor: "#00000000",
-                fillColor: "#1781b4",
+        // 09:00-18:00
+        barLevelDay: [{
+                data: [], gradient: true,
+                strokeColor: "#00000000", fillColor: "#1780b0",
             }],
+        // 06:00-09:00, 18:00-00:00
+        barLevelMiddle: [{
+                          data: [], gradient: true,
+                          strokeColor: "#00000000", fillColor: "#176090",
+                      }],
+        // 00:00-06:00
+        barLevelNight: [{
+                          data: [], gradient: true,
+                          strokeColor: "#00000000", fillColor: "#174070",
+                      }],
         barDiff: [{
-                data: [],
-                gradient: true,
-                strokeColor: "#00000000",
-                fillColor: "#A02020",
+                data: [], gradient: true,
+                strokeColor: "#00000000", fillColor: "#A02020",
             },
         ]
     },
@@ -61,6 +60,26 @@ export default {
         let avgDrain = 0;
 
         let dataLevel = batt.map(e => e.level);
+
+        let dataLevelDay = batt.map(e => {
+            if (e.hour >= 9 && e.hour < 18)
+                return e.level;
+            else
+                return 0;
+        });
+        let dataLevelMiddle = batt.map(e => {
+            if ((e.hour >= 6 && e.hour < 9) || (e.hour >= 18 && e.hour < 24))
+                return e.level;
+            else
+                return 0;
+        });
+        let dataLevelNight = batt.map(e => {
+            if (e.hour >= 0 && e.hour < 6)
+                return e.level;
+            else
+                return 0;
+        });
+
         let dataUse = [];
         dataUse[0] = 0;
         for (var i = 1; i < dataLevel.length; i++) {
@@ -79,22 +98,26 @@ export default {
             }, 0) / dataUse.length;
         }
 
-        this.barLevel[0].data = dataLevel;
+        this.barLevelDay[0].data = dataLevelDay;
+        this.barLevelMiddle[0].data = dataLevelMiddle;
+        this.barLevelNight[0].data = dataLevelNight;
         this.barDiff[0].data = dataUse;
 
-        this.levelStart = batt[0].level;
-
-        this.levelEnd = this.battLast.level;
+        this.scaleXStart = config.zeroPad(batt[0].hour, 10) +":00";
+        this.scaleXEnd = config.zeroPad(this.battLast.hour, 10) +":00";
 
         if (batt.length > 0) this.levelMin = 100;
         for (let i = 0; i < batt.length ; i++) {
-            let e = batt[i];
             let level = batt[i].level;
             if (level > this.levelMax) this.levelMax = level;
             if (level < this.levelMin) this.levelMin = level;
         }
 
-        this.titleDrain = "drain max: "+ maxDrain +"% avg: "+ avgDrain.toFixed(1) +"%";
+        if (this.battLast.level < this.levelMin) this.levelMin = this.battLast.level;
+
+        let hasFact = (avgDrain - parseInt(avgDrain)) > 0;
+        this.titleDrain = "drain max: "+ maxDrain
+            + "% avg: "+ (hasFact ? avgDrain.toFixed(1) : parseInt(avgDrain)) +"%";
 
         this.loading = false;
     },

@@ -6,14 +6,13 @@
     </div>
     <stack class="stackItem">
         <div class="loading" show="{{loading}}" on:swipe="touchMove">
-            <text class="loading-text">{{loadingText}}</text>
+            <text class="nodata">{{nodata}}</text>
         </div>
         <swiper class="swiper" ref="swiper" show="{{!loading}}" loop="false" index="{{pageIndex}}" on:swipe="touchMove" on:longpress="onLongPress">
             <div class="info">
                 <div class="percentRow">
-                    <text class="percentFrom">{{percentFrom}}</text>
-                    <image class="imgFlow" src="/common/flow.png"></image>
-                    <text class="percentTill">{{percentTo}}</text>
+                    <text class="percent">{{percentTo}}</text>
+                    <text class="percentPercent">%</text>
                 </div>
                 <div class="dataRow">
                     <image class="imgCharge" src="/common/charge.png"></image>

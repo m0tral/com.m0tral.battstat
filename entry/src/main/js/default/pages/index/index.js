@@ -17,12 +17,13 @@ export default {
         battLast: undefined,
         loading: true,
         showMenu: false,
-        loadingText: "Loading..",
+        nodata: "Please charge\r\nto start collect\r\n\statistics",
         recordCount: 0,
         fileSize: 0,
         firstTime: 0,
         lastTime: 0,
         hourPrev: 0,
+        dayPrev: 0,
         pageIndex: 0,
         titlePercent: "",
         titleLastCharge: "",
@@ -54,7 +55,8 @@ export default {
 
         //this.loading = true;
 
-        this.hourPrev = -1;
+        this.hourPrev = 0;
+        this.dayPrev = 0;
 
         this.battByHour = [];
         this.battByDay = [];
@@ -280,27 +282,44 @@ export default {
 
     parseBattDaily(e) {
 
-        if (this.battByHour.length == 0) {
-            this.battByHour.push(e);
-        }
-
         this.battLast = e;
 
-        if (this.hourPrev != e.hour && e.min == 0) {
-            if (this.battByHour.length > 20) this.battByHour.shift();
+        if (this.battByHour.length == 0) {
             this.battByHour.push(e);
-            this.hourPrev = e.hour;
+            this.hourPrev = e;
+        }
+        else if (this.hourPrev.hour != e.hour) {
+            if (e.min == 0) {
+                if (this.battByHour.length > 20) this.battByHour.shift();
+                this.battByHour.push(e);
+
+                this.hourPrev = e;
+            }
+        }
+        else if (this.hourPrev.level < e.level) {
+            // if battery was on charge, set maximum value
+            this.battByHour.pop();
+            e.min = 0;
+            this.battByHour.push(e);
         }
     },
 
     parseBattMonth(e) {
 
         if (this.battByDay.length == 0) {
-            if (this.battByDay.length > 20) this.battByDay.shift();
             this.battByDay.push(e);
+            this.dayPrev = e;
         }
         else if (e.hour == 0 && e.min == 0) {
             if (this.battByDay.length > 20) this.battByDay.shift();
+            this.battByDay.push(e);
+            this.dayPrev = e;
+        }
+        else if (this.dayPrev.level < e.level) {
+            // if battery was on charge, set maximum value
+            this.battByDay.pop();
+            e.hour = 0;
+            e.min = 0;
             this.battByDay.push(e);
         }
     },

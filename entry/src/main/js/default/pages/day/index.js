@@ -9,9 +9,9 @@ export default {
         title: 'Day view',
         filename: '/nand/batt_stat',
         loading: true,
-        loadingText: "Loading..",
-        levelStart: 0,
-        levelEnd: 0,
+        nodata: "No data",
+        scaleXStart: "",
+        scaleXEnd: "",
         levelMax: 0,
         levelMin: 0,
         battByHour:[],
@@ -52,8 +52,10 @@ export default {
 
         let batt = this.battByDay;
 
-        this.levelStart = batt[0].level;
-        this.levelEnd = batt[batt.length-1].level;
+        let rec = batt[0];
+        this.scaleXStart = config.zeroPad(rec.day, 10) +"/"+ config.zeroPad(rec.month, 10);
+        rec = batt[batt.length-1];
+        this.scaleXEnd = config.zeroPad(rec.day, 10) +"/"+ config.zeroPad(rec.month, 10);
 
         if (batt.length > 0) this.levelMin = 100;
         for (let i = 0; i < batt.length ; i++) {
