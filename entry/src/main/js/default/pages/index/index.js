@@ -12,6 +12,7 @@ export default {
         fileMonth: '/nand/batt_{0}',
         fileCharge: '/nand/batt_charge',
         battByHour:[],
+        battByHourPrev:[],
         battByDay:[],
         battCharge: undefined,
         battLast: undefined,
@@ -47,6 +48,19 @@ export default {
         };
     },
 
+    getYesterdayTime() {
+        var now = new Date();
+        now.setDate(now.getDate()-1);
+
+        return {
+            year: now.getFullYear(),
+            month: now.getMonth()+1,
+            day: now.getDate(),
+            hour: now.getHours(),
+            min: now.getMinutes()
+        };
+    },
+
     onShow() {
         this.loadStats();
     },
@@ -54,12 +68,6 @@ export default {
     loadStats() {
 
         //this.loading = true;
-
-        this.hourPrev = 0;
-        this.dayPrev = 0;
-
-        this.battByHour = [];
-        this.battByDay = [];
 
 //        this.battCharge = {
 //            month: 11,
@@ -73,8 +81,6 @@ export default {
 //        this.titlePercent = this.battCharge.level +" => 82";
 
         this.loadLastCharge();
-        this.loadBattByDay();
-        this.loadBattByMonth();
     },
 
     loadLastCharge() {
@@ -94,12 +100,12 @@ export default {
                 };
 
                 this.setLastCharged();
+
+                this.loadBattByDay();
+                this.loadBattByMonth();
             },
             fail: () => {
-                this.battCharge = undefined;
-                this.titlePercent = "please charge";
-                this.titleLastCharge = "to start collect";
-                this.titleUptime = "statistics"
+                this.loading = true;
             }
         });
 
@@ -149,13 +155,21 @@ export default {
         }
         else {
             this.titleUptime = ""+
-                diffDays + " days "+
+                diffDays + " "+ this.getPluralDay(diffDays)+" "+
                 config.zeroPad(diffHrs, 10) +":"+
                 config.zeroPad(diffMins, 10) +" min";
         }
     },
 
+    getPluralDay(count) {
+        if (count == 1) return "day";
+        return "days";
+    },
+
     loadBattByDay() {
+
+        this.hourPrev = 0;
+        this.battByHour = [];
 
         let now = this.getCurrentTime();
         let filename = this.fileDaily
@@ -173,7 +187,37 @@ export default {
                 let pos = 0;
                 let blockLen = 1000;
 
-                this.readBattData(filename, pos, blockLen, len, 1);
+                this.readBattData(filename, pos, blockLen, len, 1, 0);
+            },
+            fail: (e) => {
+                this.displayFail("daily: "+ e);
+            }
+        });
+    },
+
+    loadBattByDayPrev() {
+
+        this.hourPrev - 0;
+        this.battByHourPrev = [];
+
+        let now = this.getYesterdayTime();
+
+        let filename = this.fileDaily
+            .replace("{0}", config.zeroPad(now.month, 10))
+            .replace("{1}", config.zeroPad(now.day, 10));
+
+        file.get({
+            uri: filename,
+            success: (info) => {
+
+                this.fileSize = info.length;
+                this.recordCount = info.length / 6;
+
+                let len = info.length;
+                let pos = 0;
+                let blockLen = 1000;
+
+                this.readBattData(filename, pos, blockLen, len, 1, -1);
             },
             fail: (e) => {
                 this.displayFail("daily: "+ e);
@@ -182,6 +226,9 @@ export default {
     },
 
     loadBattByMonth() {
+
+        this.dayPrev = 0;
+        this.battByDay = [];
 
         let now = this.getCurrentTime();
         let filename = this.fileMonth.replace("{0}", config.zeroPad(now.month, 10));
@@ -202,7 +249,7 @@ export default {
         });
     },
 
-    readBattData(filename, pos, blockLen, totalLen, mode) {
+    readBattData(filename, pos, blockLen, totalLen, mode, addDays) {
 
         let left = totalLen - pos;
         let len = left > blockLen ? blockLen : left;
@@ -228,8 +275,8 @@ export default {
                     }
 
                     if (mode == 1) // daily
-                        this.parseBattDaily(record);
-                    if (mode == 2) // month
+                        this.parseBattDaily(record, addDays);
+                    else if (mode == 2) // month
                         this.parseBattMonth(record);
 
                     if (mode == 1) {
@@ -247,7 +294,7 @@ export default {
                 if (pos == totalLen) {
                     this.loading = false;
 
-                    if (mode == 1) {
+                    if (mode == 1 && addDays == 0) {
                         let display = "[" + config.zeroPad(record.hour, 10)
                         + ":" + config.zeroPad(record.min, 10)
                         + "] " + record.level;
@@ -255,10 +302,14 @@ export default {
                         this.lastTime = display;
                         //this.titlePercent = this.battCharge.level +" => "+ record.level;
                         this.percentTo = record.level;
+
+                        if (this.battByHour.length < 20) {
+                            this.loadBattByDayPrev();
+                        }
                     }
                 }
                 else {
-                    this.readBattData(filename, pos, blockLen, totalLen, mode);
+                    this.readBattData(filename, pos, blockLen, totalLen, mode, addDays);
                 }
             },
             fail: (data, code) => {
@@ -280,27 +331,56 @@ export default {
     onItemClick() {
     },
 
-    parseBattDaily(e) {
+    parseBattDaily(e, addDays) {
 
-        this.battLast = e;
+        if (addDays == 0) {
+            this.battLast = e;
 
-        if (this.battByHour.length == 0) {
-            this.battByHour.push(e);
-            this.hourPrev = e;
-        }
-        else if (this.hourPrev.hour != e.hour) {
-            if (e.min == 0) {
-                if (this.battByHour.length > 20) this.battByHour.shift();
+            if (this.battByHour.length == 0) {
                 this.battByHour.push(e);
-
                 this.hourPrev = e;
             }
+            else if (this.hourPrev.hour != e.hour) {
+                if (e.min == 0) {
+                    if (this.battByHour.length > 20) this.battByHour.shift();
+                    this.battByHour.push(e);
+                    this.hourPrev = e;
+                }
+            }
+            else if (this.hourPrev.level < e.level) {
+                // if battery was on charge, set maximum value
+                this.battByHour.pop();
+                e.min = 0;
+                this.battByHour.push(e);
+            }
         }
-        else if (this.hourPrev.level < e.level) {
-            // if battery was on charge, set maximum value
-            this.battByHour.pop();
-            e.min = 0;
-            this.battByHour.push(e);
+        else {
+
+            // skip data before charge
+            if (this.battCharge.day > e.day ||
+                this.battCharge.month > e.month ||
+                this.battCharge.hour > e.hour)
+            {
+                return;
+            }
+
+            if (this.battByHourPrev.length == 0) {
+                this.battByHourPrev.push(e);
+                this.hourPrev = e;
+            }
+            else if (this.battByHourPrev.hour != e.hour) {
+                if (e.min == 0) {
+                    if (this.battByHourPrev.length > 20) this.battByHourPrev.shift();
+                    this.battByHourPrev.push(e);
+                    this.hourPrev = e;
+                }
+            }
+            else if (this.hourPrev.level < e.level) {
+                // if battery was on charge, set maximum value
+                this.battByHourPrev.pop();
+                e.min = 0;
+                this.battByHourPrev.push(e);
+            }
         }
     },
 
@@ -330,6 +410,13 @@ export default {
                 app.terminate();
         }
         else if (e.direction == "up") {
+
+            if (this.battByHour.length < 20) {
+                let sliceLen = 20 - this.battByHour.length;
+                let sliced = this.battByHourPrev.slice(-sliceLen);
+                this.battByHour = sliced.concat(this.battByHour);
+            }
+
             router.replace({
                 uri: "pages/hour/index",
                 params: {

@@ -86,7 +86,6 @@ export default {
             let delta = dataLevel[i-1] - dataLevel[i];
             if (delta > maxDrain) maxDrain = delta;
 
-            delta = delta * 4;
             dataUse[i] = delta;
         }
         dataUse.unshift();
@@ -101,7 +100,7 @@ export default {
         this.barLevelDay[0].data = dataLevelDay;
         this.barLevelMiddle[0].data = dataLevelMiddle;
         this.barLevelNight[0].data = dataLevelNight;
-        this.barDiff[0].data = dataUse;
+        this.barDiff[0].data = dataUse.map(d => d * 3);
 
         this.scaleXStart = config.zeroPad(batt[0].hour, 10) +":00";
         this.scaleXEnd = config.zeroPad(this.battLast.hour, 10) +":00";
