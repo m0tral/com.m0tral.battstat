@@ -29,6 +29,7 @@ export default {
         titlePercent: "",
         titleLastCharge: "",
         titleUptime: "",
+        titleEstimated: "",
         percentFrom: 100,
         percentTo: 0,
     },
@@ -70,15 +71,23 @@ export default {
         //this.loading = true;
 
 //        this.battCharge = {
-//            month: 11,
-//            day: 10,
-//            hour: 5,
+//            month: 12,
+//            day: 5,
+//            hour: 0,
 //            min: 20,
 //            level: 100,
 //            charge: 0
 //        };
+//        this.battLast = {
+//            month: 12,
+//            day: 8,
+//            hour: 6,
+//            min: 10,
+//            level: 82,
+//            charge: 0
+//        };
 //        this.setLastCharged();
-//        this.titlePercent = this.battCharge.level +" => 82";
+//        this.percentTo = 85;
 
         this.loadLastCharge();
     },
@@ -158,6 +167,45 @@ export default {
                 diffDays + " "+ this.getPluralDay(diffDays)+" "+
                 config.zeroPad(diffHrs, 10) +":"+
                 config.zeroPad(diffMins, 10) +" min";
+        }
+    },
+
+    setEstimatedTime() {
+
+        if (this.battCharge == undefined || this.battLast == undefined) {
+            this.titleEstimated = "--";
+            return;
+        }
+
+        let now = new Date();
+
+        let end = new Date(now.getFullYear(), now.getMonth(), now.getDate(), now.getHours(), now.getMinutes());
+        let charge = new Date(now.getFullYear(), this.battCharge.month-1, this.battCharge.day,
+            this.battCharge.hour, this.battCharge.min);
+
+        let deltaLevel = this.battCharge.level - this.battLast.level;
+        let diffMsPass = end - charge;
+        let diffMs = parseInt((diffMsPass * this.battLast.level) / deltaLevel);
+
+        var diffDays = Math.floor(diffMs / 86400000); // days
+        var diffHrs = Math.floor((diffMs % 86400000) / 3600000); // hours
+        var diffMins = Math.round(((diffMs % 86400000) % 3600000) / 60000); // minutes
+
+        if (diffDays == 0)
+        {
+            if (diffHrs == 0) {
+                this.titleEstimated = ""+ diffMins +" min";
+            }
+            else {
+                this.titleEstimated = ""+ config.zeroPad(diffHrs, 10)
+                +":"+ config.zeroPad(diffMins, 10) +" min";
+            }
+        }
+        else {
+            this.titleEstimated = ""+
+            diffDays + " "+ this.getPluralDay(diffDays)+" "+
+            config.zeroPad(diffHrs, 10) +":"+
+            config.zeroPad(diffMins, 10) +" min";
         }
     },
 
@@ -302,6 +350,8 @@ export default {
                         this.lastTime = display;
                         //this.titlePercent = this.battCharge.level +" => "+ record.level;
                         this.percentTo = record.level;
+
+                        this.setEstimatedTime();
 
                         if (this.battByHour.length < 20) {
                             this.loadBattByDayPrev();

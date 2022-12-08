@@ -73,14 +73,12 @@
 }
 
 .levelMax, .levelMin {
-    top: 300px;
     font-size: 22px;
 }
-.levelMax {
-    left:120px;
-}
-.levelMin {
-    left:260px;
+.drain {
+    top: 40px;
+    left: 70px;
+    font-size: 26px;
 }
 
 .chartDay {

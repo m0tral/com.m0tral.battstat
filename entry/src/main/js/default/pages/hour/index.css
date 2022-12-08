@@ -74,14 +74,7 @@
 }
 
 .levelMax, .levelMin {
-    top: 300px;
     font-size: 22px;
-}
-.levelMax {
-    left:120px;
-}
-.levelMin {
-    left:260px;
 }
 .drain {
     top: 40px;
@@ -103,4 +96,34 @@
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
+}
+
+.legend {
+    left:150px;
+    top:290px;
+    height: 200px;
+    width: 466px;
+    flex-direction: column;
+}
+.legend-text {
+    font-size: 22px;
+}
+.zone {
+    height: 25px;
+    width: 466px;
+}
+.zone1, .zone2, .zone3 {
+    width: 30px;
+    height: 10px;
+    margin-right: 10px;
+    margin-top: 10px;
+}
+.zone1 {
+    background-color: #1780b0;
+}
+.zone2 {
+    background-color: #176090;
+}
+.zone3 {
+    background-color: #174070;
 }

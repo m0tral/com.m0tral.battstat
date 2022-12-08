@@ -9,11 +9,17 @@ export default {
         title: 'Day view',
         filename: '/nand/batt_stat',
         loading: true,
+        showMin: false,
         nodata: "No data",
         scaleXStart: "",
         scaleXEnd: "",
         levelMax: 0,
         levelMin: 0,
+        levelMaxX: 15,
+        levelMaxY: 100,
+        levelMinX: 15,
+        levelMinY: 120,
+        titleDrain: "",
         battByHour:[],
         battByDay:[],
         battCharge: null,
@@ -45,12 +51,18 @@ export default {
 
     onInit() {
 
+        this.showMin = false;
+
         this.battByHour = this.dataByHour;
         this.battByDay = this.dataByDay;
         this.battCharge = this.lastCharge;
         this.battLast = this.lastValue;
 
         let batt = this.battByDay;
+        let maxDrain = 0;
+        let avgDrain = 0;
+
+        let dataLevel = batt.map(e => e.level);
 
         let rec = batt[0];
         this.scaleXStart = config.zeroPad(rec.day, 10) +"/"+ config.zeroPad(rec.month, 10);
@@ -64,12 +76,51 @@ export default {
             if (level < this.levelMin) this.levelMin = level;
         }
 
-        this.barData[0].data  = batt.map(e => e.level);
+        let dataUse = [];
+        dataUse[0] = 0;
+        for (var i = 1; i < dataLevel.length; i++) {
+            let delta = dataLevel[i-1] - dataLevel[i];
+            if (delta > maxDrain) maxDrain = delta;
+
+            dataUse[i] = delta;
+        }
+        dataUse.unshift();
+        dataUse.push(0);
+
+        if (dataUse.length > 0) {
+            avgDrain = dataUse.reduce((a, b) => {
+                if (b > 0) { return a + b; } else { return a + 0; }
+            }, 0) / dataUse.length;
+        }
+
+        let hasFact = (avgDrain - parseInt(avgDrain)) > 0;
+        this.titleDrain = "drain max: "+ maxDrain
+        + "% avg: "+ (hasFact ? avgDrain.toFixed(1) : parseInt(avgDrain)) +"%";
+
+        this.barData[0].data  = dataLevel;
+
+        this.calcLevelMinMax(batt, this.battLast);
 
         this.loading = false;
     },
 
-    onTitleClick() {
+    calcLevelMinMax(batt, battLast) {
+        this.levelMaxX = 40;
+        this.levelMaxY = 84 + (150 - parseInt(batt[0].level * 1.5));
+
+        if (batt.length > 1) {
+            this.showMin = true;
+
+            if (batt.length < 3) {
+                this.levelMaxX = 30;
+                this.levelMinX = 85;
+            }
+            else {
+                this.levelMinX = 35 + (batt.length * 18);
+            }
+            this.levelMinY = 84 + (150 - parseInt(battLast.level * 1.5));
+        }
+
     },
 
     touchMove(e) {

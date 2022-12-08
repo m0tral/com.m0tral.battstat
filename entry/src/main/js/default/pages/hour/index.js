@@ -8,11 +8,16 @@ export default {
     data: {
         title: 'Hour view',
         loading: false,
+        showMin: false,
         nodata: "No data",
         scaleXStart: "",
         scaleXEnd: "",
         levelMax: 0,
         levelMin: 0,
+        levelMaxX: 15,
+        levelMaxY: 100,
+        levelMinX: 15,
+        levelMinY: 120,
         titleDrain: "",
         battByHour:[],
         battByDay:[],
@@ -49,6 +54,8 @@ export default {
     },
 
     onInit() {
+
+        this.showMin = false;
 
         this.battByHour = this.dataByHour;
         this.battByDay = this.dataByDay;
@@ -118,7 +125,27 @@ export default {
         this.titleDrain = "drain max: "+ maxDrain
             + "% avg: "+ (hasFact ? avgDrain.toFixed(1) : parseInt(avgDrain)) +"%";
 
+        this.calcLevelMinMax(batt, this.battLast);
+
         this.loading = false;
+    },
+
+    calcLevelMinMax(batt, battLast) {
+        this.levelMaxX = 40;
+        this.levelMaxY = 84 + (150 - parseInt(batt[0].level * 1.5));
+
+        if (batt.length > 1) {
+            this.showMin = true;
+
+            if (batt.length < 3) {
+                this.levelMaxX = 30;
+                this.levelMinX = 85;
+            }
+            else {
+                this.levelMinX = 35 + (batt.length * 18);
+            }
+            this.levelMinY = 84 + (150 - parseInt(battLast.level * 1.5));
+        }
     },
 
     onTitleClick() {

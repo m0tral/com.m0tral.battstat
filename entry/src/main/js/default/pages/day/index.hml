@@ -1,5 +1,5 @@
 <div class="container" on:swipe="touchMove">
-    <div class="head" on:click="onTitleClick">
+    <div class="head">
         <text class="title">
             {{ title }}
         </text>
@@ -13,9 +13,10 @@
                    options="{{options}}" datasets="{{barData}}">
             </chart>
         </div>
+        <text class="drain" show="{{!loading}}">{{titleDrain}}</text>
+        <text class="levelMax" style="left:{{levelMaxX}}px;top:{{levelMaxY}}px;" show="{{!loading}}">{{levelMax}}%</text>
+        <text class="levelMin" style="left:{{levelMinX}}px;top:{{levelMinY}}px;" show="{{showMin}}">{{levelMin}}%</text>
         <text class="levelStart" show="{{!loading}}">{{scaleXStart}}</text>
         <text class="levelEnd" show="{{!loading}}">{{scaleXEnd}}</text>
-        <text class="levelMax" show="{{!loading}}">max: {{levelMax}}%</text>
-        <text class="levelMin" show="{{!loading}}">min: {{levelMin}}%</text>
     </stack>
 </div>

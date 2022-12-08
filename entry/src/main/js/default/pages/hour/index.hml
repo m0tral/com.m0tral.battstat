@@ -29,10 +29,14 @@
             </chart>
         </div>
         <text class="drain" show="{{!loading}}">{{titleDrain}}</text>
-        <text class="levelMin" show="{{!loading}}">min: {{levelMin}}%</text>
+        <text class="levelMax" style="left:{{levelMaxX}}px;top:{{levelMaxY}}px;" show="{{!loading}}">{{levelMax}}%</text>
+        <text class="levelMin" style="left:{{levelMinX}}px;top:{{levelMinY}}px;" show="{{showMin}}">{{levelMin}}%</text>
         <text class="levelStart" show="{{!loading}}">{{scaleXStart}}</text>
         <text class="levelEnd" show="{{!loading}}">{{scaleXEnd}}</text>
-        <text class="levelMax" show="{{!loading}}">max: {{levelMax}}%</text>
-        <text class="levelMin" show="{{!loading}}">min: {{levelMin}}%</text>
+        <div class="legend" show="{{!loading}}">
+            <div class="zone"><div class="zone1"></div><text class="legend-text">09-18</text></div>
+            <div class="zone"><div class="zone2"></div><text class="legend-text">06-09 18-24</text></div>
+            <div class="zone"><div class="zone3"></div><text class="legend-text">00-06</text></div>
+        </div>
     </stack>
 </div>
