@@ -1,12 +1,12 @@
 <div class="container" on:swipe="touchMove">
     <div class="head" on:click="onTitleClick">
         <text class="title">
-            {{ title }}
+            {{ $t('strings.title_hour') }}
         </text>
     </div>
     <stack class="stackItem">
         <div class="loading" show="{{loading}}">
-            <text class="loading-text">{{nodata}}</text>
+            <text class="loading-text">{{$t('strings.no_data')}}</text>
         </div>
         <div class="chart" show="{{!loading}}">
             <chart class="chartDay" type="bar"

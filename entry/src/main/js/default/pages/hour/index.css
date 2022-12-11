@@ -38,8 +38,8 @@
 .loading {
     width: 466px;
     height: 406px;
-    background-color: #222222;
 }
+
 .loading-text {
     width: 466px;
     height: 40px;
@@ -78,7 +78,7 @@
 }
 .drain {
     top: 40px;
-    left: 70px;
+    left: 60px;
     font-size: 26px;
 }
 

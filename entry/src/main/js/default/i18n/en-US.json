@@ -1,6 +1,15 @@
 {
   "strings": {
-    "hello": "Hello",
-    "world": "World"
+    "title_info": "Info",
+    "title_hour": "Hour view",
+    "title_day": "Day view",
+    "no_data": "No data",
+    "first_charge": "Please charge\r\nto start collect\r\nstatistics",
+    "day": "day",
+    "days": "days",
+    "hour": "hour",
+    "min": "min",
+    "drain_max": "drain max:",
+    "avg": "avg:"
   }
 }

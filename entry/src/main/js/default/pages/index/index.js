@@ -15,10 +15,10 @@ export default {
         battByHourPrev:[],
         battByDay:[],
         battCharge: undefined,
+        battFirst: undefined,
         battLast: undefined,
         loading: true,
         showMenu: false,
-        nodata: "Please charge\r\nto start collect\r\n\statistics",
         recordCount: 0,
         fileSize: 0,
         firstTime: 0,
@@ -35,6 +35,7 @@ export default {
     },
 
     onInit() {
+        this.loading = true;
     },
 
     getCurrentTime() {
@@ -110,6 +111,8 @@ export default {
 
                 this.setLastCharged();
 
+                this.loading = false;
+
                 this.loadBattByDay();
                 this.loadBattByMonth();
             },
@@ -155,24 +158,24 @@ export default {
         if (diffDays == 0)
         {
             if (diffHrs == 0) {
-                this.titleUptime = ""+ diffMins +" min";
+                this.titleUptime = ""+ diffMins +" "+ this.$t('strings.min');
             }
             else {
                 this.titleUptime = ""+ config.zeroPad(diffHrs, 10)
-                    +":"+ config.zeroPad(diffMins, 10) +" min";
+                    +":"+ config.zeroPad(diffMins, 10) +" "+ this.$t('strings.min');
             }
         }
         else {
             this.titleUptime = ""+
                 diffDays + " "+ this.getPluralDay(diffDays)+" "+
                 config.zeroPad(diffHrs, 10) +":"+
-                config.zeroPad(diffMins, 10) +" min";
+                config.zeroPad(diffMins, 10) +" "+ this.$t('strings.min');
         }
     },
 
     setEstimatedTime() {
 
-        if (this.battCharge == undefined || this.battLast == undefined) {
+        if (this.battCharge == undefined || this.battLast == undefined || this.battLast.charge == 1) {
             this.titleEstimated = "--";
             return;
         }
@@ -194,24 +197,24 @@ export default {
         if (diffDays == 0)
         {
             if (diffHrs == 0) {
-                this.titleEstimated = ""+ diffMins +" min";
+                this.titleEstimated = ""+ diffMins +" "+ this.$t('strings.min');
             }
             else {
                 this.titleEstimated = ""+ config.zeroPad(diffHrs, 10)
-                +":"+ config.zeroPad(diffMins, 10) +" min";
+                +":"+ config.zeroPad(diffMins, 10) +" "+ this.$t('strings.min');
             }
         }
         else {
             this.titleEstimated = ""+
             diffDays + " "+ this.getPluralDay(diffDays)+" "+
             config.zeroPad(diffHrs, 10) +":"+
-            config.zeroPad(diffMins, 10) +" min";
+            config.zeroPad(diffMins, 10) +" "+ this.$t('strings.min');
         }
     },
 
     getPluralDay(count) {
-        if (count == 1) return "day";
-        return "days";
+        if (count == 1) return this.$t('strings.day');
+        return this.$t('strings.days');;
     },
 
     loadBattByDay() {
@@ -333,6 +336,7 @@ export default {
                             + ":" + config.zeroPad(record.min, 10)
                             + "] " + record.level;
 
+                            this.battFirst = record;
                             this.firstTime = displayFirst;
                         }
                     }
@@ -353,7 +357,7 @@ export default {
 
                         this.setEstimatedTime();
 
-                        if (this.battByHour.length < 20) {
+                        if (this.battByHour.length < 20 && !this.isChargedToday()) {
                             this.loadBattByDayPrev();
                         }
                     }
@@ -382,6 +386,8 @@ export default {
     },
 
     parseBattDaily(e, addDays) {
+
+        if (!this.isRecordAfterCharge(e)) return;
 
         if (addDays == 0) {
             this.battLast = e;
@@ -436,6 +442,8 @@ export default {
 
     parseBattMonth(e) {
 
+        if (!this.isRecordAfterCharge(e)) return;
+
         if (this.battByDay.length == 0) {
             this.battByDay.push(e);
             this.dayPrev = e;
@@ -452,6 +460,25 @@ export default {
             e.min = 0;
             this.battByDay.push(e);
         }
+    },
+
+    isRecordAfterCharge(e) {
+        let curr = new Date(2022, e.month-1, e.day, e.hour, e.min);
+        let charge = new Date(2022, this.battCharge.month-1, this.battCharge.day,
+            this.battCharge.hour, this.battCharge.min);
+
+        return curr > charge;
+    },
+
+    isChargedToday() {
+        if (this.battCharge == undefined || this.battFirst == undefined)
+            return false;
+
+        if (this.battCharge.month == this.battFirst.month
+            && this.battCharge.day == this.battFirst.day)
+            return true;
+
+        return false;
     },
 
     touchMove(e) {

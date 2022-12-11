@@ -1,12 +1,12 @@
 <div class="container" >
     <div class="head" on:click="onTitleClick">
         <text class="title">
-            {{ title }}
+            {{ $t('strings.title_info') }}
         </text>
     </div>
     <stack class="stackItem">
         <div class="loading" show="{{loading}}" on:swipe="touchMove">
-            <text class="nodata">{{nodata}}</text>
+            <text class="nodata">{{ $t('strings.first_charge') }}</text>
         </div>
         <swiper class="swiper" ref="swiper" show="{{!loading}}" loop="false" index="{{pageIndex}}" on:swipe="touchMove" on:longpress="onLongPress">
             <div class="info">

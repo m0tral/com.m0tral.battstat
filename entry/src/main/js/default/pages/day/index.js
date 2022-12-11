@@ -10,7 +10,6 @@ export default {
         filename: '/nand/batt_stat',
         loading: true,
         showMin: false,
-        nodata: "No data",
         scaleXStart: "",
         scaleXEnd: "",
         levelMax: 0,
@@ -94,8 +93,8 @@ export default {
         }
 
         let hasFact = (avgDrain - parseInt(avgDrain)) > 0;
-        this.titleDrain = "drain max: "+ maxDrain
-        + "% avg: "+ (hasFact ? avgDrain.toFixed(1) : parseInt(avgDrain)) +"%";
+        this.titleDrain = this.$t('strings.drain_max') +" "+ maxDrain
+        + "% "+ this.$t('strings.avg') +" "+ (hasFact ? avgDrain.toFixed(1) : parseInt(avgDrain)) +"%";
 
         this.barData[0].data  = dataLevel;
 

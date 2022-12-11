@@ -7,9 +7,8 @@ import config from '../../common/config.js';
 export default {
     data: {
         title: 'Hour view',
-        loading: false,
+        loading: true,
         showMin: false,
-        nodata: "No data",
         scaleXStart: "",
         scaleXEnd: "",
         levelMax: 0,
@@ -65,6 +64,9 @@ export default {
         let batt = this.battByHour;
         let maxDrain = 0;
         let avgDrain = 0;
+
+        if (batt == null || batt.length == 0)
+            return;
 
         let dataLevel = batt.map(e => e.level);
 
@@ -122,8 +124,8 @@ export default {
         if (this.battLast.level < this.levelMin) this.levelMin = this.battLast.level;
 
         let hasFact = (avgDrain - parseInt(avgDrain)) > 0;
-        this.titleDrain = "drain max: "+ maxDrain
-            + "% avg: "+ (hasFact ? avgDrain.toFixed(1) : parseInt(avgDrain)) +"%";
+        this.titleDrain = this.$t('strings.drain_max') +" "+ maxDrain
+            + "% "+ this.$t('strings.avg') +" "+ (hasFact ? avgDrain.toFixed(1) : parseInt(avgDrain)) +"%";
 
         this.calcLevelMinMax(batt, this.battLast);
 
