@@ -17,6 +17,7 @@ export default {
         battCharge: undefined,
         battFirst: undefined,
         battLast: undefined,
+        notSupported: true,
         loading: true,
         showMenu: false,
         recordCount: 0,
@@ -35,7 +36,12 @@ export default {
     },
 
     onInit() {
+        this.notSupported = true;
         this.loading = true;
+
+        if (typeof getFwVersion != 'undefined' && typeof getFwVersion == "function") {
+            this.notSupported = false;
+        }
     },
 
     getCurrentTime() {

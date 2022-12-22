@@ -1,6 +1,16 @@
 {
   "strings": {
-    "hello": "您好",
-    "world": "世界"
+    "title_info": "Info",
+    "title_hour": "Hour view",
+    "title_day": "Day view",
+    "no_data": "No data",
+    "first_charge": "Please charge\r\nto start collect\r\nstatistics",
+    "not_supported": "custom fw v1.3\r\nrequired",
+    "day": "day",
+    "days": "days",
+    "hour": "hour",
+    "min": "min",
+    "drain_max": "drain max:",
+    "avg": "avg:"
   }
 }

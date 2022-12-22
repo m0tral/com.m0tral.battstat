@@ -5,6 +5,7 @@
     "title_day": "Day view",
     "no_data": "No data",
     "first_charge": "Please charge\r\nto start collect\r\nstatistics",
+    "not_supported": "custom fw v1.3\r\nrequired",
     "day": "day",
     "days": "days",
     "hour": "hour",

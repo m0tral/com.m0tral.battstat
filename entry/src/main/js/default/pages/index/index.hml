@@ -5,7 +5,10 @@
         </text>
     </div>
     <stack class="stackItem">
-        <div class="loading" show="{{loading}}" on:swipe="touchMove">
+        <div class="loading" show="{{notSupported}}" on:swipe="touchMove">
+            <text class="nodata">{{ $t('strings.not_supported') }}</text>
+        </div>
+        <div class="loading" show="{{!notSupported && loading}}" on:swipe="touchMove">
             <text class="nodata">{{ $t('strings.first_charge') }}</text>
         </div>
         <swiper class="swiper" ref="swiper" show="{{!loading}}" loop="false" index="{{pageIndex}}" on:swipe="touchMove" on:longpress="onLongPress">
