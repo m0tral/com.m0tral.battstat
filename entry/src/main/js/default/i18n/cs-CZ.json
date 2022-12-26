@@ -1,0 +1,16 @@
+{
+  "strings": {
+    "title_info": "Info",
+    "title_hour": "Hodinový",
+    "title_day": "Denní",
+    "no_data": "Chybí data",
+    "first_charge": "Nabitím\r\nzačnete sbírat\r\nstatistiky.",
+    "not_supported": "modifikovaný fw v1.3\r\nje nutný",
+    "day": "den",
+    "days": "dny",
+    "hour": "hod.",
+    "min": "min.",
+    "drain_max": "max spotř.:",
+    "avg": "prům.:"
+  }
+}
