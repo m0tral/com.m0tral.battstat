@@ -1,0 +1,16 @@
+{
+  "strings": {
+    "title_info": "Info",
+    "title_hour": "Godzinowy",
+    "title_day": "Dzienny",
+    "no_data": "Brak danych",
+    "first_charge": "Naładuj\r\nby zacząć zbierać\r\nstatystyki.",
+    "not_supported": "modyfikowany fw v1.3\r\npotrzebny",
+    "day": "dzień",
+    "days": "dni",
+    "hour": "godź.",
+    "min": "min.",
+    "drain_max": "maks. pobór:",
+    "avg": "śred.:"
+  }
+}
