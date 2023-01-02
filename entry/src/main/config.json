@@ -3,8 +3,8 @@
     "bundleName": "com.m0tral.battstat",
     "vendor": "m0tral",
     "version": {
-      "code": 1,
-      "name": "1.0"
+      "code": 2,
+      "name": "2.0"
     }
   },
   "deviceConfig": {},

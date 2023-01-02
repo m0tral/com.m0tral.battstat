@@ -152,7 +152,14 @@ export default {
         let now = new Date();
 
         let end = new Date(now.getFullYear(), now.getMonth(), now.getDate(), now.getHours(), now.getMinutes());
-        let charge = new Date(now.getFullYear(), this.battCharge.month-1, this.battCharge.day,
+
+        let battChargeYear = now.getFullYear();
+        let battChargeMonth = this.battCharge.month - 1;
+        if (now.getMonth() == 0 && battChargeMonth == 11) {
+            battChargeYear = battChargeYear - 1;
+        }
+
+        let charge = new Date(battChargeYear, battChargeMonth, this.battCharge.day,
             this.battCharge.hour, this.battCharge.min);
 
         let diffMs =  end - charge;
@@ -189,7 +196,14 @@ export default {
         let now = new Date();
 
         let end = new Date(now.getFullYear(), now.getMonth(), now.getDate(), now.getHours(), now.getMinutes());
-        let charge = new Date(now.getFullYear(), this.battCharge.month-1, this.battCharge.day,
+
+        let battChargeYear = now.getFullYear();
+        let battChargeMonth = this.battCharge.month - 1;
+        if (now.getMonth() == 0 && battChargeMonth == 11) {
+            battChargeYear = battChargeYear - 1;
+        }
+
+        let charge = new Date(battChargeYear, battChargeMonth, this.battCharge.day,
             this.battCharge.hour, this.battCharge.min);
 
         let deltaLevel = this.battCharge.level - this.battLast.level;
@@ -298,7 +312,7 @@ export default {
                 let pos = 0;
                 let blockLen = 1000;
 
-                this.readBattData(filename, pos, blockLen, len, 2);
+                this.readBattData(filename, pos, blockLen, len, 2, 0);
             },
             fail: (e) => {
                 this.displayFail("month: "+ e);
@@ -316,6 +330,8 @@ export default {
             position: pos,
             length: len,
             success: (data) => {
+
+                //logger.sendMessage(""+filename+": "+ pos +"/"+ len);
 
                 let displayFirst;
                 let record;
@@ -469,8 +485,14 @@ export default {
     },
 
     isRecordAfterCharge(e) {
-        let curr = new Date(2022, e.month-1, e.day, e.hour, e.min);
-        let charge = new Date(2022, this.battCharge.month-1, this.battCharge.day,
+        let curYear = new Date().getFullYear();
+        let chgYear = curYear;
+        let recMonth = e.month - 1;
+        let battChargeMonth = this.battCharge.month-1;
+        if (recMonth == 0 && battChargeMonth == 11) chgYear = curYear - 1;
+
+        let curr = new Date(curYear, e.month-1, e.day, e.hour, e.min);
+        let charge = new Date(chgYear, this.battCharge.month-1, this.battCharge.day,
             this.battCharge.hour, this.battCharge.min);
 
         return curr > charge;
